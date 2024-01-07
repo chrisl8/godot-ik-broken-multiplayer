@@ -1,0 +1,132 @@
+[gd_scene load_steps=9 format=3 uid="uid://cnckqfxi8eyk8"]
+
+[ext_resource type="Script" path="res://player/PlayerController.gd" id="1_ntq5g"]
+[ext_resource type="Texture2D" uid="uid://cgoy7vka18x5b" path="res://player/Player Atlas.png" id="5_e4w6p"]
+
+[sub_resource type="GDScript" id="1"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_qk016"]
+friction = 0.0
+script = SubResource("1")
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4uxh2"]
+size = Vector2(27, 49)
+
+[sub_resource type="SkeletonModification2DTwoBoneIK" id="SkeletonModification2DTwoBoneIK_ag147"]
+target_nodepath = NodePath("../Left Hand Target")
+flip_bend_direction = true
+joint_one_bone_idx = 1
+joint_one_bone2d_node = NodePath("Torso/Upper Arm")
+joint_two_bone_idx = 2
+joint_two_bone2d_node = NodePath("Torso/Upper Arm/Lower Arm")
+
+[sub_resource type="SkeletonModificationStack2D" id="SkeletonModificationStack2D_tbk5s"]
+enabled = true
+modification_count = 1
+modifications/0 = SubResource("SkeletonModification2DTwoBoneIK_ag147")
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_ir062"]
+properties/0/path = NodePath(".:linear_velocity")
+properties/0/spawn = true
+properties/0/replication_mode = 2
+properties/1/path = NodePath(".:angular_velocity")
+properties/1/spawn = true
+properties/1/replication_mode = 2
+properties/2/path = NodePath(".:player")
+properties/2/spawn = true
+properties/2/replication_mode = 0
+properties/3/path = NodePath(".:SyncedPosition")
+properties/3/spawn = true
+properties/3/replication_mode = 1
+properties/4/path = NodePath(".:SyncedRotation")
+properties/4/spawn = true
+properties/4/replication_mode = 1
+properties/5/path = NodePath(".:MousePosition")
+properties/5/spawn = true
+properties/5/replication_mode = 1
+
+[node name="Player" type="RigidBody2D" node_paths=PackedStringArray("camera") groups=["players"]]
+collision_layer = 2
+collision_mask = 11
+physics_material_override = SubResource("PhysicsMaterial_qk016")
+gravity_scale = 0.0
+can_sleep = false
+lock_rotation = true
+freeze_mode = 1
+continuous_cd = 1
+max_contacts_reported = 5
+contact_monitor = true
+linear_damp = 25.0
+angular_damp = 0.5
+script = ExtResource("1_ntq5g")
+player_spawn_point = Vector2(0, 0)
+camera = NodePath("Camera2D")
+
+[node name="Collision" type="CollisionShape2D" parent="."]
+position = Vector2(3.5, -24.5)
+shape = SubResource("RectangleShape2D_4uxh2")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(0, -31.37)
+zoom = Vector2(2, 2)
+position_smoothing_enabled = true
+
+[node name="Skeleton2D" type="Skeleton2D" parent="."]
+modification_stack = SubResource("SkeletonModificationStack2D_tbk5s")
+
+[node name="Torso" type="Bone2D" parent="Skeleton2D"]
+position = Vector2(2, -21)
+rest = Transform2D(1, 0, 0, 1, 2, -21)
+auto_calculate_length_and_angle = false
+length = 17.0
+bone_angle = -90.0
+
+[node name="Upper Arm" type="Bone2D" parent="Skeleton2D/Torso"]
+position = Vector2(-2, -18)
+rotation = 0.643471
+scale = Vector2(0.999984, 0.999984)
+rest = Transform2D(0.800005, 0.599967, -0.599967, 0.800005, -2, -18)
+metadata/_local_pose_override_enabled_ = true
+
+[node name="Lower Arm" type="Bone2D" parent="Skeleton2D/Torso/Upper Arm"]
+position = Vector2(15.0002, -6.55681e-07)
+rotation = -2.85776
+scale = Vector2(0.999988, 0.999988)
+rest = Transform2D(-0.959977, -0.280036, 0.280036, -0.959977, 15.0002, -6.55681e-07)
+auto_calculate_length_and_angle = false
+length = 15.0
+bone_angle = 90.0
+metadata/_local_pose_override_enabled_ = true
+
+[node name="Lower Left Arm" type="Polygon2D" parent="Skeleton2D/Torso/Upper Arm/Lower Arm"]
+z_index = 1
+texture_filter = 1
+position = Vector2(-52.0015, -6.00017)
+texture = ExtResource("5_e4w6p")
+skeleton = NodePath("../../../..")
+polygon = PackedVector2Array(49, 6, 55, 6, 55, 21, 49, 21)
+uv = PackedVector2Array(49, 6, 55, 6, 55, 21, 49, 21)
+
+[node name="Upper Left Arm" type="Polygon2D" parent="Skeleton2D/Torso/Upper Arm"]
+z_index = 2
+texture_filter = 1
+position = Vector2(-6.00028, 40.0019)
+rotation = -1.5708
+texture = ExtResource("5_e4w6p")
+skeleton = NodePath("../../..")
+polygon = PackedVector2Array(37, 6, 43, 6, 43, 21, 37, 21)
+uv = PackedVector2Array(37, 6, 43, 6, 43, 21, 37, 21)
+
+[node name="Body" type="Polygon2D" parent="Skeleton2D/Torso"]
+texture_filter = 1
+position = Vector2(-21, -39)
+texture = ExtResource("5_e4w6p")
+skeleton = NodePath("../..")
+polygon = PackedVector2Array(6, 14, 15, 14, 18, 16, 24, 16, 29, 21, 29, 30, 26, 40, 15, 40, 14, 38, 6, 38)
+uv = PackedVector2Array(6, 14, 15, 14, 15, 18, 26, 18, 29, 21, 29, 30, 26, 40, 15, 40, 14, 38, 6, 38)
+
+[node name="Left Hand Target" type="Node2D" parent="."]
+position = Vector2(23, -41)
+
+[node name="PlayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_ir062")
